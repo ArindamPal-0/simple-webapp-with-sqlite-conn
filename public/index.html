@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="icon" type="image/png" href="/favicon.png" />
+        <title>WebApp</title>
+    </head>
+    <body>
+        <h1>WebApp</h1>
+        <button id="getAllButton">get all stories</button>
+        <table style="border: 1px solid silver">
+            <thead>
+                <tr>
+                    <th>S/no</th>
+                    <th>Title</th>
+                </tr>
+            </thead>
+            <tbody id="getAll">
+                <tr>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+        <hr />
+        <form id="titleForm">
+            <input type="text" id="titleText" placeholder="title" />
+            <button>get story</button>
+        </form>
+        <div id="getStory"></div>
+
+        <script>
+            const tbody = document.getElementById("getAll");
+
+            document
+                .getElementById("getAllButton")
+                ?.addEventListener("click", async (event) => {
+                    event.preventDefault();
+
+                    const data = await fetch("/api/stories").then((res) =>
+                        res.json()
+                    );
+                    tbody.innerHTML = "";
+                    let tableBody = "";
+
+                    if (data.stories) {
+                        data.stories.forEach((story) => {
+                            tableBody += `<tr>
+                                            <td>${story.id}</td>
+                                            <td>${story.title}</td>
+                                        </tr>`;
+                        });
+                    }
+
+                    tbody.innerHTML = tableBody;
+                });
+
+            document
+                .getElementById("titleForm")
+                ?.addEventListener("submit", async (event) => {
+                    event.preventDefault();
+
+                    const input = document.getElementById("titleText");
+                    const div = document.getElementById("getStory");
+
+                    if (div) {
+                        if (input && input.value) {
+                            // console.log(input.value);
+
+                            const data = await fetch(
+                                `/api/stories?title=${input.value}`
+                            ).then((res) => res.json());
+
+                            div.innerText = JSON.stringify(data.story);
+
+                            input.value = "";
+                        }
+                    }
+                });
+        </script>
+    </body>
+</html>
